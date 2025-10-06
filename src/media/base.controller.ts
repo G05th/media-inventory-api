@@ -12,7 +12,6 @@ export abstract class BaseMediaController {
     const actotId = "60c72b9f9b1d8e0015f8e5b4";
     createMediaDto.createdBy = actotId;
     createMediaDto.updatedBy = actotId;
-    createMediaDto.type = String(createMediaDto.type || "").toUpperCase();
 
     return this.mediaService.create(createMediaDto);
   }
