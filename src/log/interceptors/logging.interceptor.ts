@@ -3,13 +3,23 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
-} from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
-import { LogService } from '../log.service';
+} from "@nestjs/common";
+import { Request } from "express";
+import { Observable, tap } from "rxjs";
+import { LogService } from "../log.service";
 
 interface MediaAssetsResponse {
   _id: string;
   title: string;
+}
+
+interface JwtPayload {
+  sub: string;
+  email: string;
+}
+
+interface AuthRequest extends Request {
+  user: JwtPayload;
 }
 
 @Injectable()
@@ -18,10 +28,11 @@ export class LoggingInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const httpContext = context.switchToHttp();
-    const request = httpContext.getRequest<Request>();
+    const request = httpContext.getRequest<AuthRequest>();
 
-    const actorId = '60c72b9f9b1d8e0015f8e5b4';
     const now = Date.now();
+
+    const actorId = request.user.sub;
 
     return next.handle().pipe(
       tap({
@@ -29,9 +40,9 @@ export class LoggingInterceptor implements NestInterceptor {
           console.log(
             `[LOG SUCCESS] ${request.method} ${request.url} levou ${Date.now() - now}`,
           );
-          if (request.method == 'POST' && data && data._id) {
+          if (request.method == "POST" && data && data._id) {
             void this.logService.saveLog({
-              action: 'MEDIA_ASSET_CREATED',
+              action: "MEDIA_ASSET_CREATED",
               mediaAssetId: data._id.toString(),
               actorId: actorId,
               details: { title: data.title },
