@@ -1,5 +1,6 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import * as Mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import * as Mongoose from "mongoose";
+
 
 export type MediaDocument = Media & Document;
 @Schema({ timestamps: true })
@@ -10,7 +11,7 @@ export class Media {
   @Prop({ required: true })
   url: string;
 
-  @Prop({ required: true, enum: ['VIDEOS', 'NEWS'] })
+  @Prop({ required: true, enum: ["VIDEOS", "NEWS"] })
   type: string;
 
   @Prop()
